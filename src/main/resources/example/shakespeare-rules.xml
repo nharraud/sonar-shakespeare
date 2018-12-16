@@ -1,0 +1,16 @@
+<shakespeare-rules>
+	<rule>
+		<key>ShakespeareRule1</key>
+		<name>Shakespeare Rule 1</name>
+		<internalKey>ShakespeareRule1</internalKey>
+		<description>This is an example of rule defined thru the XML.
+		</description>
+		<severity>BLOCKER</severity>
+		<cardinality>SINGLE</cardinality>
+		<status>READY</status>
+		<type>BUG</type>
+		<tag>example</tag>
+		<remediationFunction>CONSTANT_ISSUE</remediationFunction>
+        <remediationFunctionBaseEffort>2min</remediationFunctionBaseEffort>
+	</rule>
+</shakespeare-rules>

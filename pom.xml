@@ -15,6 +15,8 @@
     <sonar.apiVersion>6.7.1</sonar.apiVersion>
     <jdk.min.version>1.8</jdk.min.version>
     <sonar.sources>src/main/java,src/main/js</sonar.sources>
+    <sslr.version>1.23</sslr.version>
+    <sslr.xpath.version>1.22</sslr.xpath.version>
   </properties>
 
   <dependencies>
@@ -31,12 +33,41 @@
       <version>2.6</version>
     </dependency>
 
+    <!-- compile dependencies -->
+    <dependency>
+      <groupId>org.sonarsource.sslr</groupId>
+      <artifactId>sslr-core</artifactId>
+      <version>${sslr.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>cglib</groupId>
+          <artifactId>cglib-nodep</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sslr</groupId>
+      <artifactId>sslr-toolkit</artifactId>
+      <version>${sslr.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sslr</groupId>
+      <artifactId>sslr-xpath</artifactId>
+      <version>${sslr.xpath.version}</version>
+    </dependency>
+
 
     <!-- unit tests -->
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-testing-harness</artifactId>
       <version>${sonar.apiVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sslr</groupId>
+      <artifactId>sslr-testing-harness</artifactId>
+      <version>${sslr.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -196,8 +196,8 @@ public class FooLintIssuesLoaderSensor implements Sensor {
 
       // as the goal of this example is not to demonstrate how to parse an xml file we return an hard coded list of FooError
 
-      ErrorDataFromExternalLinter fooError1 = new ErrorDataFromExternalLinter("ExampleRule1", "More precise description of the error", "src/MyClass.foo", 5);
-      ErrorDataFromExternalLinter fooError2 = new ErrorDataFromExternalLinter("ExampleRule2", "More precise description of the error", "src/MyClass.foo", 9);
+      ErrorDataFromExternalLinter fooError1 = new ErrorDataFromExternalLinter("ExampleRule1", "More precise description of the error", "test.foo", 5);
+      ErrorDataFromExternalLinter fooError2 = new ErrorDataFromExternalLinter("ExampleRule2", "More precise description of the error", "test.foo", 8);
 
       return Arrays.asList(fooError1, fooError2);
     }
