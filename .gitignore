@@ -1,0 +1,5 @@
+node
+target
+node_modules
+org.eclipse.*
+.project
