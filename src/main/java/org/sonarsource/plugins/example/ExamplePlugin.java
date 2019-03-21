@@ -32,7 +32,6 @@ import org.sonarsource.plugins.example.measures.ComputeSizeRating;
 import org.sonarsource.plugins.example.measures.ExampleMetrics;
 import org.sonarsource.plugins.example.measures.SetSizeOnFilesSensor;
 import org.sonarsource.plugins.example.rules.CreateIssuesOnJavaFilesSensor;
-import org.sonarsource.plugins.example.rules.FooLintIssuesLoaderSensor;
 import org.sonarsource.plugins.example.rules.FooLintRulesDefinition;
 import org.sonarsource.plugins.example.rules.JavaRulesDefinition;
 import org.sonarsource.plugins.example.sensors.ShakespeareRulesDefinition;
