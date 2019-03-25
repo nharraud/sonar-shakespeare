@@ -25,8 +25,8 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
+import org.sonar.sslr.parser.LexerlessGrammar;
 import org.sonarsource.plugins.example.rules.PersonaeCheck;
-import org.sonarsource.plugins.example.shakespeare.ShakespeareGrammar;
 import org.sonarsource.plugins.example.shakespeare.ShakespeareParser;
 
 /**
@@ -34,7 +34,7 @@ import org.sonarsource.plugins.example.shakespeare.ShakespeareParser;
  */
 public class PersonaeRulesTest {
   private final AstWalker walker = new AstWalker();
-  protected final Parser<Grammar> p = ShakespeareParser.create();
+  protected final Parser<LexerlessGrammar> p = ShakespeareParser.create();
   protected final Grammar g = p.getGrammar();
 
   @Test

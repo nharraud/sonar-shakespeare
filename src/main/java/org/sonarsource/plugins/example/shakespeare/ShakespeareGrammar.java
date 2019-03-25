@@ -1,56 +1,39 @@
 package org.sonarsource.plugins.example.shakespeare;
 
-import static org.sonarsource.plugins.example.shakespeare.ShakespeareLexer.Punctuators.*;
-
-import static org.sonarsource.plugins.example.shakespeare.ShakespeareLexer.IGNORED.ANYTHING_ELSE;
-
-import com.sonar.sslr.api.Grammar;
-import static com.sonar.sslr.api.GenericTokenType.IDENTIFIER;
-
 import org.sonar.sslr.grammar.GrammarRuleKey;
-import org.sonar.sslr.grammar.LexerfulGrammarBuilder;
 import org.sonar.sslr.grammar.LexerlessGrammarBuilder;
-
-enum ShakespearePunctuator implements GrammarRuleKey {
-  DOT("."),
-  EXCLAMATION("!");
-  private final String value;
-
-  ShakespearePunctuator(String value) {
-    this.value = value;
-  }
-
-  public String getValue() {
-    return value;
-  }
-}
+import org.sonar.sslr.parser.LexerlessGrammar;
 
 public enum ShakespeareGrammar implements GrammarRuleKey {
-  TEXT_BEFORE_PUNCTUATION,
+  DOT, EXCLAMATION,
   TITLE,
+  END,
+  COLUMN,
+  COMMA,
   DRAMATIS_PERSONAE,
-  PERSONA,
+  PERSONA_DECLARATION,
+  PERSONA_NAME,
+  PERSONA_DESCRIPTION,
+  WHITESPACE,
   PLAY;
 
-public static Grammar create() {
-    LexerfulGrammarBuilder b = LexerfulGrammarBuilder.create();
-    b.rule(TEXT_BEFORE_PUNCTUATION).is(b.oneOrMore(b.firstOf(IDENTIFIER, ANYTHING_ELSE)));
-    b.rule(TITLE).is(TEXT_BEFORE_PUNCTUATION, DOT);
-    b.rule(PERSONA).is(b.sequence(IDENTIFIER, COMMA, TEXT_BEFORE_PUNCTUATION, DOT));
-    b.rule(DRAMATIS_PERSONAE).is(b.oneOrMore(PERSONA));
+public static LexerlessGrammar create() {
+    LexerlessGrammarBuilder b = LexerlessGrammarBuilder.create();
+
+    b.rule(WHITESPACE).is(b.regexp("\\s+"));
+    b.rule(DOT).is(".");
+    b.rule(EXCLAMATION).is("!");
+    b.rule(END).is(b.firstOf(DOT, EXCLAMATION), b.zeroOrMore(WHITESPACE));
+    b.rule(COLUMN).is(":");
+    b.rule(COMMA).is(",");
+    b.rule(TITLE).is(b.regexp("[^!.]*"), END);
+    b.rule(PERSONA_NAME).is(b.regexp("[A-Za-z]+(\\s+[A-Za-z]+)*"));
+    b.rule(PERSONA_DESCRIPTION).is(b.regexp("[^!.]*"), END);
+    b.rule(PERSONA_DECLARATION).is(PERSONA_NAME, b.zeroOrMore(WHITESPACE), COMMA, b.regexp("[^!.]*"), END);
+    b.rule(DRAMATIS_PERSONAE).is(b.oneOrMore(PERSONA_DECLARATION));
     b.rule(PLAY).is(TITLE, DRAMATIS_PERSONAE);
+    
     b.setRootRule(PLAY);
     return b.build();
-
-    // LexerlessGrammarBuilder b = LexerlessGrammarBuilder.create();
-
-    // b.rule(TITLE).is(b.sequence(b.regexp("[^!\\.]*"), b.firstOf(ShakespearePunctuator.DOT, ShakespearePunctuator.EXCLAMATION)));
-    // // b.rule(TITLE).is(b.sequence(b.regexp("[^!\\.]*"), b.firstOf(DOT, EXCLAMATION)));
-    // b.rule(PLAY).is(TITLE);
-    // for (ShakespearePunctuator p : ShakespearePunctuator.values()) {
-    //   b.rule(p).is(p.getValue()).skip();
-    // }
-    // b.setRootRule(PLAY);
-    // return b.build();
   }
 }

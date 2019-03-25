@@ -28,6 +28,7 @@ import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonar.sslr.parser.LexerlessGrammar;
 import org.sonarsource.plugins.example.rules.PersonaeCheck;
 import org.sonarsource.plugins.example.rules.ShakespeareCheck;
 import org.sonarsource.plugins.example.shakespeare.ShakespeareParser;
@@ -45,7 +46,7 @@ public class ShakespeareScanner {
   private FileLinesContextFactory fileLinesContextFactory;
   private NoSonarFilter noSonarFilter;
 
-  private final Parser<Grammar> p = ShakespeareParser.create();
+  private final Parser<LexerlessGrammar> p = ShakespeareParser.create();
   private final Grammar g = p.getGrammar();
   public final static Map<RuleKey, Class<? extends ShakespeareCheck>> visitors = Map
       .ofEntries(new AbstractMap.SimpleEntry<>(PersonaeCheck.KEY, PersonaeCheck.class));

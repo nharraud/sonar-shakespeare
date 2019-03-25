@@ -17,18 +17,6 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 
 public class PlayTest extends RuleTest {
-  // private static final String FILE_NAME = "start.spl";
-
-  @Override
-  @Before
-  public void init() {
-    p.setRootRule(g.rule(ShakespeareGrammar.PLAY));
-  }
-
-  // public void test(AstNode node) {
-  //   AstNodeType type = node.getType();
-  // }
-
   @Test
   public void reallife() throws Exception {
     // ClassLoader classLoader = getClass().getClassLoader();
@@ -40,8 +28,8 @@ public class PlayTest extends RuleTest {
     , "Juliet, a likewise young woman of remarkable grace."
     , "Ophelia, a remarkable woman much in dispute with Hamlet."
     , "Hamlet, the flatterer of Andersen Insulting A/S."
-);
-assertThat(p)
+  );
+  assertThat(g.rule(ShakespeareGrammar.PLAY))
     .matches(program);
     // Path file_path = Paths.get(PlayTest.class.getResource(FILE_NAME).toURI());
     // String program = new String(Files.readAllBytes(file_path), StandardCharsets.UTF_8);
