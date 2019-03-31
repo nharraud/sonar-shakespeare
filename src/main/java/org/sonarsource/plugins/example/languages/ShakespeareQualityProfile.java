@@ -33,8 +33,9 @@ public final class ShakespeareQualityProfile implements BuiltInQualityProfilesDe
     NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile("Shakespeare Rules", ShakespeareLanguage.KEY);
     profile.setDefault(true);
 
-    NewBuiltInActiveRule rule1 = profile.activateRule(REPO_KEY, "ShakespeareRule1");
+    NewBuiltInActiveRule rule1 = profile.activateRule(REPO_KEY, "PersonaeRule");
     rule1.overrideSeverity("BLOCKER");
+    profile.activateRule(REPO_KEY, "CyranoRule");
 
     profile.done();
   }

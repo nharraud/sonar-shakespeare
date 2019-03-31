@@ -1,4 +1,4 @@
-package org.sonarsource.plugins.example.rules;
+package org.sonarsource.plugins.example.shakespeare;
 
 import java.util.List;
 
@@ -9,12 +9,12 @@ import com.sonar.sslr.api.AstVisitor;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 
-public abstract class ShakespeareCheck implements AstVisitor {
+public abstract class ShakespeareVisitor implements AstVisitor {
 
   protected final SensorContext context;
   protected final InputFile file;
 
-  public ShakespeareCheck(SensorContext context, InputFile file) {
+  public ShakespeareVisitor(SensorContext context, InputFile file) {
     this.context = context;
     this.file = file;
   }

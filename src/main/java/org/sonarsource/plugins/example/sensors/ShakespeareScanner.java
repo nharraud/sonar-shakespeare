@@ -21,6 +21,7 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.error.NewAnalysisError;
+import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.issue.NoSonarFilter;
@@ -29,8 +30,10 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.sslr.parser.LexerlessGrammar;
+import org.sonarsource.plugins.example.rules.CyranoCheck;
 import org.sonarsource.plugins.example.rules.PersonaeCheck;
-import org.sonarsource.plugins.example.rules.ShakespeareCheck;
+import org.sonarsource.plugins.example.shakespeare.ShakespeareVisitor;
+import org.sonarsource.plugins.example.shakespeare.SyntaxHighlighterVisitor;
 import org.sonarsource.plugins.example.shakespeare.ShakespeareParser;
 import org.sonarsource.plugins.example.sensors.ShakespeareRulesDefinition;
 
@@ -48,8 +51,11 @@ public class ShakespeareScanner {
 
   private final Parser<LexerlessGrammar> p = ShakespeareParser.create();
   private final Grammar g = p.getGrammar();
-  public final static Map<RuleKey, Class<? extends ShakespeareCheck>> visitors = Map
-      .ofEntries(new AbstractMap.SimpleEntry<>(PersonaeCheck.KEY, PersonaeCheck.class));
+  public final static Map<RuleKey, Class<? extends ShakespeareVisitor>> visitors = Map
+      .ofEntries(
+          new AbstractMap.SimpleEntry<>(PersonaeCheck.KEY, PersonaeCheck.class),
+          new AbstractMap.SimpleEntry<>(CyranoCheck.KEY, CyranoCheck.class)
+      );
 
   public ShakespeareScanner(SensorContext context, FileLinesContextFactory fileLinesContextFactory,
       NoSonarFilter noSonarFilter, List<InputFile> inputFiles) {
@@ -60,14 +66,25 @@ public class ShakespeareScanner {
   }
 
   public void scanFiles() {
-    Collection<Class<? extends ShakespeareCheck>> activeVisitors = getActiveVisitors();
+    Collection<Class<? extends ShakespeareVisitor>> activeVisitors = getActiveVisitors();
     for (InputFile shakespeareFile : inputFiles) {
       if (context.isCancelled()) {
         return;
       }
       try {
         AstWalker walker = createWalker(shakespeareFile, activeVisitors);
-        scanFile(shakespeareFile, walker);
+        // scanFile(shakespeareFile, walker);
+
+        NewHighlighting highlighting = context.newHighlighting().onFile(shakespeareFile);
+        SyntaxHighlighterVisitor syntaxHighlighter = new SyntaxHighlighterVisitor(
+          this.context, shakespeareFile, highlighting
+        );
+        walker.addVisitor(syntaxHighlighter);
+        
+        AstNode node = p.parse(shakespeareFile.contents());
+        walker.walkAndVisit(node);
+        highlighting.save();
+
       } catch (IOException e) {
         NewAnalysisError error = context.newAnalysisError();
         error.message(e.getMessage());
@@ -76,11 +93,11 @@ public class ShakespeareScanner {
     }
   }
 
-  private Collection<Class<? extends ShakespeareCheck>> getActiveVisitors() {
+  private Collection<Class<? extends ShakespeareVisitor>> getActiveVisitors() {
     Collection<ActiveRule> activeRules = context.activeRules().findByRepository(ShakespeareRulesDefinition.REPO_KEY);
-    List<Class<? extends ShakespeareCheck>> activeVisitors = new ArrayList<>();
+    List<Class<? extends ShakespeareVisitor>> activeVisitors = new ArrayList<>();
     for (ActiveRule rule : activeRules) {
-      Class<? extends ShakespeareCheck> visitor = visitors.get(rule.ruleKey());
+      Class<? extends ShakespeareVisitor> visitor = visitors.get(rule.ruleKey());
       if (visitor == null) {
         NewAnalysisError error = context.newAnalysisError();
         error.message(String.format("could not find rule %s", rule.toString()));
@@ -92,11 +109,11 @@ public class ShakespeareScanner {
     return activeVisitors;
   }
 
-  private AstWalker createWalker(InputFile file, Collection<Class<? extends ShakespeareCheck>> visitors) {
+  private AstWalker createWalker(InputFile file, Collection<Class<? extends ShakespeareVisitor>> visitors) {
     AstWalker walker = new AstWalker();
-    for (Class<? extends ShakespeareCheck> visitor : visitors) {
+    for (Class<? extends ShakespeareVisitor> visitor : visitors) {
       try {
-        Constructor<? extends ShakespeareCheck> constructor = visitor.getDeclaredConstructor(SensorContext.class, InputFile.class);
+        Constructor<? extends ShakespeareVisitor> constructor = visitor.getDeclaredConstructor(SensorContext.class, InputFile.class);
         walker.addVisitor(constructor.newInstance(this.context, file));
       } catch (Exception e) {
         LOGGER.error("Error while creating AstVisitor", e);
@@ -108,13 +125,10 @@ public class ShakespeareScanner {
     return walker;
   }
 
-  private void scanFile(InputFile inputFile, AstWalker walker) throws IOException {
-    LOGGER.warn("Scanning file " + inputFile.filename());
-
-    // new PersonaeCheck(context, inputFile));
-    // p.setRootRule(g.rule(ShakespeareGrammar.DRAMATIS_PERSONAE));
-    AstNode node = p.parse(inputFile.contents());
-    walker.walkAndVisit(node);
-  }
+  // private void scanFile(InputFile inputFile, AstWalker walker) throws IOException {
+  //   LOGGER.warn("Scanning file " + inputFile.filename());
+  //   AstNode node = p.parse(inputFile.contents());
+  //   walker.walkAndVisit(node);
+  // }
 
 }

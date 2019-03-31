@@ -3,31 +3,28 @@ package org.sonarsource.plugins.example.rules;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
-import com.sonar.sslr.api.AstVisitor;
 
-import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonarsource.plugins.example.sensors.ShakespeareRulesDefinition;
 import org.sonarsource.plugins.example.shakespeare.ShakespeareGrammar;
+import org.sonarsource.plugins.example.shakespeare.ShakespeareVisitor;
 import org.sonarsource.plugins.example.utils.AstNodeLocation;
 
 /**
  * PersonaeCheck
  */
-public class PersonaeCheck extends ShakespeareCheck {
-  public final static RuleKey KEY = RuleKey.of(ShakespeareRulesDefinition.REPO_KEY, "ShakespeareRule1");
+public class PersonaeCheck extends ShakespeareVisitor {
+  public final static RuleKey KEY = RuleKey.of(ShakespeareRulesDefinition.REPO_KEY, "PersonaeRule");
 
   public final static String NO_WEAPONS = "Don't give them any weapon";
   public final static String NO_POINSON = "Don't give them any poison";

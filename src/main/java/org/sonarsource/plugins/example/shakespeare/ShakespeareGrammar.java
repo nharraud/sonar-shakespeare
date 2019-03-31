@@ -17,12 +17,15 @@ public enum ShakespeareGrammar implements GrammarRuleKey {
   COLUMN,
   COMMA,
 
+  AND,
   DRAMATIS_PERSONAE,
   PERSONA_DECLARATION,
   PERSONA_NAME,
   PERSONA_DESCRIPTION,
   
+  ACT_ID,
   ACT,
+  SCENE_ID,
   SCENE,
 
   PERSONAE_LIST,
@@ -58,6 +61,7 @@ public enum ShakespeareGrammar implements GrammarRuleKey {
   POSITIVE_COMPARATIVE,
   NEGATIVE_COMPARATIVE,
   POSITIVE_OR_NEUTRAL_NOUN,
+  NEGATIVE_OR_NEUTRAL_NOUN,
 
   NEUTRAL_COMPARATIVE,
   NEGATIVE_NOUN_PHRASE,
@@ -87,6 +91,7 @@ public enum ShakespeareGrammar implements GrammarRuleKey {
 public static LexerlessGrammar create() {
     CaseInsensitiveLexerlessGrammarBuilder b = CaseInsensitiveLexerlessGrammarBuilder.create();
 
+    b.rule(AND).is("and");
     b.rule(BE).is(b.firstOf("am", "are", "art", "be", "is"), WHITESPACE);
     b.rule(ARTICLE).is(b.firstOf("an", "a", "the"), WHITESPACE);
     b.rule(FIRST_PERSON).is(b.firstOf("I", "me"));
@@ -183,10 +188,11 @@ public static LexerlessGrammar create() {
 
     b.rule(POSITIVE_OR_NEUTRAL_ADJECTIVE).is(b.firstOf(POSITIVE_ADJECTIVE, NEUTRAL_ADJECTIVE));
     b.rule(POSITIVE_OR_NEUTRAL_NOUN).is(b.firstOf(POSITIVE_NOUN, NEUTRAL_NOUN));
+    b.rule(NEGATIVE_OR_NEUTRAL_NOUN).is(b.firstOf(NEGATIVE_NOUN, NEUTRAL_NOUN));
 
     b.rule(NEUTRAL_COMPARATIVE).is("as", WHITESPACE, b.firstOf(NEGATIVE_ADJECTIVE, POSITIVE_OR_NEUTRAL_ADJECTIVE), "as");
     
-    b.rule(NEGATIVE_NOUN_PHRASE).is(b.optional(b.firstOf(ARTICLE, POSSESSIVE)), b.zeroOrMore(b.firstOf(NEGATIVE_ADJECTIVE, NEUTRAL_ADJECTIVE)), NEGATIVE_NOUN);
+    b.rule(NEGATIVE_NOUN_PHRASE).is(b.optional(b.firstOf(ARTICLE, POSSESSIVE)), b.zeroOrMore(b.firstOf(NEGATIVE_ADJECTIVE, NEUTRAL_ADJECTIVE)), NEGATIVE_OR_NEUTRAL_NOUN);
 
     b.rule(POSITIVE_NOUN_PHRASE).is(b.optional(b.firstOf(ARTICLE, POSSESSIVE)), b.zeroOrMore(POSITIVE_OR_NEUTRAL_ADJECTIVE), POSITIVE_OR_NEUTRAL_NOUN);
     b.rule(NOUN_PHRASE).is(b.firstOf(NEGATIVE_NOUN_PHRASE, POSITIVE_NOUN_PHRASE));
@@ -203,7 +209,7 @@ public static LexerlessGrammar create() {
       b.sequence("the", WHITESPACE, "remainder", WHITESPACE, "of", WHITESPACE, "the", WHITESPACE, "quotient", WHITESPACE, "between"),
       b.sequence("the", WHITESPACE, "sum", WHITESPACE, "of")
     ));
-    b.rule(BINARY_EXPRESSION).is(BINARY_OPERATION, WHITESPACE, VALUE, WHITESPACE, "and", WHITESPACE, VALUE);
+    b.rule(BINARY_EXPRESSION).is(BINARY_OPERATION, WHITESPACE, VALUE, WHITESPACE, AND, WHITESPACE, VALUE);
     b.rule(UNARY_OPERATION).is(b.firstOf(
       b.sequence("the", WHITESPACE, "cube", WHITESPACE, "of"),
       b.sequence("the", WHITESPACE, "factorial", WHITESPACE, "of"),
@@ -264,10 +270,13 @@ public static LexerlessGrammar create() {
     b.rule(PERSONA_DECLARATION).is(PERSONA_NAME, OPT_WHITESPACE, COMMA, ANY_TEXT, END);
     b.rule(DRAMATIS_PERSONAE).is(b.oneOrMore(PERSONA_DECLARATION));
 
-    b.rule(ACT).is("Act", WHITESPACE, ROMAN_NUMBER, OPT_WHITESPACE, COLUMN, ANY_TEXT, END);
-    b.rule(SCENE).is("Scene", WHITESPACE, ROMAN_NUMBER, OPT_WHITESPACE, COLUMN, ANY_TEXT, END);
+    b.rule(ACT_ID).is("Act", WHITESPACE, ROMAN_NUMBER);
+    b.rule(SCENE_ID).is("Scene", WHITESPACE, ROMAN_NUMBER);
 
-    b.rule(PERSONAE_LIST).is(PERSONA_NAME, b.zeroOrMore(COMMA, OPT_WHITESPACE, PERSONA_NAME), b.optional(WHITESPACE, "and", WHITESPACE, PERSONA_NAME));
+    b.rule(ACT).is(ACT_ID, OPT_WHITESPACE, COLUMN, ANY_TEXT, END);
+    b.rule(SCENE).is(SCENE_ID, OPT_WHITESPACE, COLUMN, ANY_TEXT, END);
+
+    b.rule(PERSONAE_LIST).is(PERSONA_NAME, b.zeroOrMore(COMMA, OPT_WHITESPACE, PERSONA_NAME), b.optional(WHITESPACE, AND, WHITESPACE, PERSONA_NAME));
     b.rule(ENTER).is("[", OPT_WHITESPACE, "Enter", WHITESPACE, PERSONAE_LIST, OPT_WHITESPACE, "]");
     b.rule(EXIT).is("[", OPT_WHITESPACE, "Exit", WHITESPACE, PERSONAE_LIST, OPT_WHITESPACE, "]");
     b.rule(EXEUNT).is("[", OPT_WHITESPACE, "Exeunt", b.optional(WHITESPACE, PERSONAE_LIST), OPT_WHITESPACE, "]");
