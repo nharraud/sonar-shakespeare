@@ -1,19 +1,10 @@
 package org.sonarsource.plugins.example.shakespeare.language;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sonar.sslr.parser.LexerlessGrammar;
-import org.sonarsource.plugins.example.shakespeare.ShakespeareGrammar;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Logger;
-
-import com.sonar.sslr.api.Grammar;
-
 import static org.sonar.sslr.tests.Assertions.assertThat;
+
+import org.junit.Test;
+import org.sonarsource.plugins.example.shakespeare.ShakespeareGrammar;
 
 public class DramatisPersonaeTest extends RuleTest {
 

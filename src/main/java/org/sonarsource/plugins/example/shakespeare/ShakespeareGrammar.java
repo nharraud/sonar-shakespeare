@@ -2,7 +2,6 @@ package org.sonarsource.plugins.example.shakespeare;
 
 import org.sonar.sslr.grammar.CaseInsensitiveLexerlessGrammarBuilder;
 import org.sonar.sslr.grammar.GrammarRuleKey;
-import org.sonar.sslr.grammar.LexerlessGrammarBuilder;
 import org.sonar.sslr.parser.LexerlessGrammar;
 
 public enum ShakespeareGrammar implements GrammarRuleKey {
@@ -176,8 +175,6 @@ public static LexerlessGrammar create() {
       )
     );
 
-    // b.rule(PERSONA_NAME).is(b.regexp("((?!Act)[A-Za-z])+(\\s+[A-Za-z]+)*"));
-
     b.rule(NOTHING).is(b.firstOf("nothing", "zero"));
 
     b.rule(POSSESSIVE).is(b.firstOf(FIRST_PERSON_POSSESSIVE, SECOND_PERSON_POSSESSIVE, THIRD_PERSON_POSSESSIVE));
@@ -289,17 +286,12 @@ public static LexerlessGrammar create() {
       b.optional(BE, "as", WHITESPACE, b.firstOf(POSITIVE_OR_NEUTRAL_ADJECTIVE,  NEGATIVE_ADJECTIVE), "as", WHITESPACE),
       VALUE, END
     );
-    // b.rule(ASSIGNMENT).is(
-    //   b.firstOf("test-test", "bla-bla"), END
-    // );
 
     b.rule(SENTENCE).is(b.firstOf(QUESTION, ASSIGNMENT, GOTO, OUTPUT, INPUT, PUSH, POP));
-    // b.rule(SENTENCE).is(ASSIGNMENT);
 
     b.rule(LINE).is(PERSONA_NAME, OPT_WHITESPACE, COLUMN, OPT_WHITESPACE, b.oneOrMore(SENTENCE));
 
     b.rule(EVENT).is(b.firstOf(LINE, BREAKPOINT, ENTER, EXIT, EXEUNT), OPT_WHITESPACE);
-    // b.rule(EVENT).is(b.firstOf(LINE, ENTER, EXIT, EXEUNT), OPT_WHITESPACE);
 
     b.rule(PLAY).is(TITLE, DRAMATIS_PERSONAE, b.oneOrMore(ACT, b.oneOrMore(SCENE, b.oneOrMore(EVENT))));
 

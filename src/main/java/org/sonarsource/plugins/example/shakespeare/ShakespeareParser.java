@@ -4,9 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 
 import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.Grammar;
 import com.sonar.sslr.impl.Parser;
-import com.sonar.sslr.impl.Parser.Builder;
 
 import org.apache.commons.io.FileUtils;
 import org.sonar.sslr.parser.LexerlessGrammar;

@@ -2,17 +2,13 @@ package org.sonarsource.plugins.example.sensors;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.AstVisitor;
 import com.sonar.sslr.api.Grammar;
 import com.sonar.sslr.impl.Parser;
 import com.sonar.sslr.impl.ast.AstWalker;
@@ -22,8 +18,6 @@ import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.error.NewAnalysisError;
 import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
-import org.sonar.api.batch.sensor.issue.NewIssue;
-import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
@@ -32,10 +26,9 @@ import org.sonar.api.utils.log.Loggers;
 import org.sonar.sslr.parser.LexerlessGrammar;
 import org.sonarsource.plugins.example.rules.CyranoCheck;
 import org.sonarsource.plugins.example.rules.PersonaeCheck;
+import org.sonarsource.plugins.example.shakespeare.ShakespeareParser;
 import org.sonarsource.plugins.example.shakespeare.ShakespeareVisitor;
 import org.sonarsource.plugins.example.shakespeare.SyntaxHighlighterVisitor;
-import org.sonarsource.plugins.example.shakespeare.ShakespeareParser;
-import org.sonarsource.plugins.example.sensors.ShakespeareRulesDefinition;
 
 /**
  * ShakespeareScanner
@@ -73,7 +66,6 @@ public class ShakespeareScanner {
       }
       try {
         AstWalker walker = createWalker(shakespeareFile, activeVisitors);
-        // scanFile(shakespeareFile, walker);
 
         NewHighlighting highlighting = context.newHighlighting().onFile(shakespeareFile);
         SyntaxHighlighterVisitor syntaxHighlighter = new SyntaxHighlighterVisitor(
@@ -124,11 +116,4 @@ public class ShakespeareScanner {
     }
     return walker;
   }
-
-  // private void scanFile(InputFile inputFile, AstWalker walker) throws IOException {
-  //   LOGGER.warn("Scanning file " + inputFile.filename());
-  //   AstNode node = p.parse(inputFile.contents());
-  //   walker.walkAndVisit(node);
-  // }
-
 }

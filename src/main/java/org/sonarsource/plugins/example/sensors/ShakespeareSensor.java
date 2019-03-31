@@ -19,33 +19,22 @@
  */
 package org.sonarsource.plugins.example.sensors;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import javax.xml.stream.XMLStreamException;
 
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.CheckFactory;
-import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
-import org.sonar.api.batch.sensor.error.NewAnalysisError;
-import org.sonar.api.batch.sensor.issue.NewIssue;
-import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.plugins.example.languages.FooLanguage;
 import org.sonarsource.plugins.example.languages.ShakespeareLanguage;
 
 /**
@@ -62,7 +51,6 @@ public class ShakespeareSensor implements Sensor {
   protected final FileSystem fileSystem;
   protected SensorContext context;
 
-  // private final Checks<ShakespeareCheck> checks;
   private final FileLinesContextFactory fileLinesContextFactory;
   private final NoSonarFilter noSonarFilter;
 
@@ -74,9 +62,6 @@ public class ShakespeareSensor implements Sensor {
     this.config = config;
     this.fileSystem = fileSystem;
 
-    // this.checks = checkFactory
-    // .<PythonCheck>create(CheckList.REPOSITORY_KEY)
-    // .addAnnotatedChecks(CheckList.getChecks());
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.noSonarFilter = noSonarFilter;
   }
@@ -98,56 +83,7 @@ public class ShakespeareSensor implements Sensor {
     List<InputFile> inputFiles = Collections.unmodifiableList(list);
 
     ShakespeareScanner scanner = new ShakespeareScanner(context
-    // , checks
         , fileLinesContextFactory, noSonarFilter, inputFiles);
     scanner.scanFiles();
   }
-
-  // protected void parseAndSaveResults(final File file) throws XMLStreamException {
-  //   LOGGER.info("(mock) Parsing 'FooLint' Analysis Results");
-  //   FooLintAnalysisResultsParser parser = new FooLintAnalysisResultsParser();
-  //   List<ErrorDataFromExternalLinter> errors = parser.parse(file);
-  //   for (ErrorDataFromExternalLinter error : errors) {
-  //     getResourceAndSaveIssue(error);
-  //   }
-  // }
-
-  // private void getResourceAndSaveIssue(final ErrorDataFromExternalLinter error) {
-  //   LOGGER.debug(error.toString());
-
-  //   InputFile inputFile = fileSystem.inputFile(
-  //     fileSystem.predicates().and(
-  //       fileSystem.predicates().hasRelativePath(error.getFilePath()),
-  //       fileSystem.predicates().hasType(InputFile.Type.MAIN)));
-
-  //   LOGGER.debug("inputFile null ? " + (inputFile == null));
-
-  //   if (inputFile != null) {
-  //     saveIssue(inputFile, error.getLine(), error.getType(), error.getDescription());
-  //   } else {
-  //     LOGGER.error("Not able to find a InputFile with " + error.getFilePath());
-  //   }
-  // }
-
-  // private void saveIssue(final InputFile inputFile, int line, final String externalRuleKey, final String message) {
-  //   RuleKey ruleKey = RuleKey.of(ShakespeareRulesDefinition.REPO_NAME, externalRuleKey);
-
-  //   NewIssue newIssue = context.newIssue()
-  //     .forRule(ruleKey);
-
-  //   NewIssueLocation primaryLocation = newIssue.newLocation()
-  //     .on(inputFile)
-  //     .message(message);
-  //   if (line > 0) {
-  //     primaryLocation.at(inputFile.selectLine(line));
-  //   }
-  //   newIssue.at(primaryLocation);
-
-  //   newIssue.save();
-  // }
-
-  // @Override
-  // public String toString() {
-  //   return "ShakespeareSensor";
-  // }
 }

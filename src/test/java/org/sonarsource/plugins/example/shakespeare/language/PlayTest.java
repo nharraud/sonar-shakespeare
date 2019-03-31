@@ -1,20 +1,15 @@
 package org.sonarsource.plugins.example.shakespeare.language;
 
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.sonarsource.plugins.example.shakespeare.ShakespeareGrammar;
+import static org.sonar.sslr.tests.Assertions.assertThat;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Logger;
 
-import static org.sonar.sslr.tests.Assertions.assertThat;
-
-import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.AstNodeType;
+import org.junit.Test;
+import org.sonarsource.plugins.example.shakespeare.ShakespeareGrammar;
 
 public class PlayTest extends RuleTest {
   @Test
